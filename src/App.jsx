@@ -301,4 +301,345 @@ function LoginPage({ onLogin }) {
   );
 }
 
-// ======================================
+// ============================================================
+// DASHBOARD TABS
+// ============================================================
+function DashboardTab({ label, icon, active, onClick }) {
+  return (
+    <button onClick={onClick} style={{ flex: 1, padding: "10px 4px", background: active ? "rgba(255,215,0,0.12)" : "transparent", border: "none", borderBottom: active ? "2px solid #ffd700" : "2px solid transparent", color: active ? "#ffd700" : "rgba(138,255,138,0.5)", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.3s", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+      <span style={{ fontSize: 18 }}>{icon}</span>
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function HomeTab({ user }) {
+  const [members, setMembers] = useState(getLive(BASE_MEMBERS, 2));
+  const [orphans, setOrphans] = useState(getLive(BASE_ORPHANS, 3));
+  useEffect(() => { const t = setInterval(() => { setMembers(getLive(BASE_MEMBERS, 2)); setOrphans(getLive(BASE_ORPHANS, 3)); }, 5000); return () => clearInterval(t); }, []);
+  const [quote] = useState(LEADER_QUOTES[Math.floor(Math.random() * LEADER_QUOTES.length)]);
+  return (
+    <div style={{ padding: 16, direction: "rtl" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 48, filter: "drop-shadow(0 0 20px rgba(255,215,0,0.7))", marginBottom: 8 }}>🦅</div>
+        <div style={{ color: "#ffd700", fontSize: 22, fontWeight: 700, textShadow: "0 0 20px rgba(255,215,0,0.4)" }}>حزب واتي المقاوم</div>
+        <div style={{ color: "rgba(138,255,138,0.5)", fontSize: 12, marginTop: 4 }}>{getArabicDate()}</div>
+      </div>
+      <div style={{ background: "rgba(255,215,0,0.06)", border: "1px solid rgba(255,215,0,0.15)", borderRadius: 12, padding: 14, marginBottom: 14, textAlign: "center" }}>
+        <div style={{ color: "rgba(255,215,0,0.6)", fontSize: 11, marginBottom: 6 }}>قول القائد</div>
+        <div style={{ color: "#ffd700", fontSize: 14, fontWeight: 700, lineHeight: 1.8 }}>{quote}</div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+        {[
+          { label: "الأعضاء", val: fmt(members), icon: "👥", color: "#4dff4d" },
+          { label: "المكفولون", val: fmt(orphans), icon: "👶", color: "#ffd700" },
+          { label: "الكتائب", val: "4", icon: "⚔️", color: "#ff4444" },
+          { label: "التحالفات", val: "14", icon: "🤝", color: "#44aaff" },
+        ].map((s, i) => (
+          <div key={i} style={{ background: "rgba(6,13,6,0.9)", border: "1px solid rgba(42,122,42,0.4)", borderRadius: 12, padding: 14, textAlign: "center" }}>
+            <div style={{ fontSize: 22, marginBottom: 6 }}>{s.icon}</div>
+            <div style={{ color: s.color, fontSize: 20, fontWeight: 700 }}>{s.val}</div>
+            <div style={{ color: "rgba(138,255,138,0.5)", fontSize: 11, marginTop: 4 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ color: "#ffd700", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>البيانات الرسمية</div>
+        {ANNOUNCEMENTS.map((a, i) => (
+          <div key={i} style={{ background: a.urgent ? "rgba(255,0,0,0.06)" : "rgba(6,13,6,0.9)", border: `1px solid ${a.urgent ? "rgba(255,68,68,0.3)" : "rgba(42,122,42,0.4)"}`, borderRadius: 10, padding: 12, marginBottom: 8 }}>
+            <div style={{ color: a.urgent ? "#ff6666" : "#ffd700", fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{a.urgent ? "🔴 " : ""}{a.title}</div>
+            <div style={{ color: "rgba(200,230,200,0.7)", fontSize: 12, lineHeight: 1.7 }}>{a.body}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ background: "rgba(6,13,6,0.9)", border: "1px solid rgba(42,122,42,0.4)", borderRadius: 12, padding: 14, textAlign: "center" }}>
+        <div style={{ color: "#8aff8a", fontSize: 12 }}>عضو: {user.name} | {user.membershipId}</div>
+      </div>
+    </div>
+  );
+}
+
+function LeaderTab() {
+  return (
+    <div style={{ padding: 16, direction: "rtl" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 60, marginBottom: 8 }}>👑</div>
+        <div style={{ color: "#ffd700", fontSize: 22, fontWeight: 700 }}>القائد العام</div>
+        <div style={{ color: "#4dff4d", fontSize: 16, marginTop: 4 }}>أحمد عادل كاظم — واتي</div>
+        <div style={{ color: "rgba(138,255,138,0.4)", fontSize: 12, marginTop: 2 }}>مواليد العراق 6 شباط 2003</div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+        {LEADER_TITLES.map((t, i) => (
+          <div key={i} style={{ background: "rgba(255,215,0,0.06)", border: "1px solid rgba(255,215,0,0.15)", borderRadius: 12, padding: 14, textAlign: "center" }}>
+            <div style={{ fontSize: 28, marginBottom: 6 }}>{t.icon}</div>
+            <div style={{ color: "#ffd700", fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{t.title}</div>
+            <div style={{ color: "rgba(255,215,0,0.6)", fontSize: 11, lineHeight: 1.6 }}>{t.desc}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ color: "#ffd700", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>أقوال القائد</div>
+        {LEADER_QUOTES.map((q, i) => (
+          <div key={i} style={{ background: "rgba(6,13,6,0.9)", border: "1px solid rgba(42,122,42,0.3)", borderRadius: 10, padding: 12, marginBottom: 8, borderRight: "3px solid #ffd700" }}>
+            <div style={{ color: "rgba(255,215,0,0.8)", fontSize: 13, lineHeight: 1.8, fontStyle: "italic" }}>"{q}"</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AllianceTab() {
+  return (
+    <div style={{ padding: 16, direction: "rtl" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 48, marginBottom: 8 }}>🤝</div>
+        <div style={{ color: "#ffd700", fontSize: 20, fontWeight: 700 }}>التحالفات الدولية</div>
+      </div>
+      {ALLIANCES.map((a, i) => (
+        <div key={i} style={{ background: a.important ? "rgba(255,215,0,0.08)" : "rgba(6,13,6,0.9)", border: `1px solid ${a.important ? "rgba(255,215,0,0.3)" : "rgba(42,122,42,0.4)"}`, borderRadius: 12, padding: 14, marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ fontSize: 28 }}>{a.icon}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: a.important ? "#ffd700" : "#8aff8a", fontSize: 14, fontWeight: 700 }}>{a.name} {a.important && "(التحالف الأهم)"}</div>
+            <div style={{ color: "rgba(200,230,200,0.6)", fontSize: 12, marginTop: 2 }}>{a.desc}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MilitaryTab() {
+  return (
+    <div style={{ padding: 16, direction: "rtl" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 48, marginBottom: 8 }}>⚔️</div>
+        <div style={{ color: "#ff4444", fontSize: 20, fontWeight: 700 }}>الكتائب العسكرية</div>
+      </div>
+      {MILITARY_UNITS.map((u, i) => (
+        <div key={i} style={{ background: "rgba(6,13,6,0.9)", border: `1px solid ${u.color}33`, borderRadius: 12, padding: 14, marginBottom: 10, borderRight: `3px solid ${u.color}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+            <span style={{ fontSize: 24 }}>{u.icon}</span>
+            <span style={{ color: u.color, fontSize: 16, fontWeight: 700 }}>{u.name}</span>
+            <span style={{ marginRight: "auto", background: u.status === "نشط" ? "rgba(77,255,77,0.15)" : "rgba(255,255,255,0.05)", color: u.status === "نشط" ? "#4dff4d" : "rgba(200,200,200,0.4)", fontSize: 11, padding: "2px 8px", borderRadius: 6 }}>{u.status}</span>
+          </div>
+          <div style={{ color: "rgba(200,230,200,0.6)", fontSize: 12 }}>{u.desc}</div>
+        </div>
+      ))}
+      <div style={{ background: "rgba(6,13,6,0.9)", border: "1px solid rgba(42,122,42,0.4)", borderRadius: 12, padding: 14, marginTop: 10 }}>
+        <div style={{ color: "#ffd700", fontSize: 13, fontWeight: 700, marginBottom: 6 }}>المنشآت السرية</div>
+        <div style={{ color: "rgba(200,230,200,0.6)", fontSize: 12, lineHeight: 1.8 }}>6 مستشفيات سرية | دور أيتام | مصانع عسكرية متطورة</div>
+      </div>
+    </div>
+  );
+}
+
+function ReligionTab() {
+  return (
+    <div style={{ padding: 16, direction: "rtl" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 48, marginBottom: 8 }}>🕌</div>
+        <div style={{ color: "#ffd700", fontSize: 20, fontWeight: 700 }}>الهيئة الدينية</div>
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ color: "#ffd700", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>المستشارون الدينيون — علماء الأزهر</div>
+        {RELIGIOUS_SCHOLARS.map((s, i) => (
+          <div key={i} style={{ background: "rgba(6,13,6,0.9)", border: "1px solid rgba(42,122,42,0.3)", borderRadius: 8, padding: "8px 12px", marginBottom: 6, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ color: "#ffd700", fontSize: 12 }}>{i + 1}.</span>
+            <span style={{ color: "#8aff8a", fontSize: 13 }}>{s}</span>
+          </div>
+        ))}
+      </div>
+      <div>
+        <div style={{ color: "#ffd700", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>الفتاوى الرسمية</div>
+        {FATWAS.map((f, i) => (
+          <div key={i} style={{ background: "rgba(255,215,0,0.04)", border: "1px solid rgba(255,215,0,0.15)", borderRadius: 12, padding: 14, marginBottom: 8 }}>
+            <div style={{ color: "#ffd700", fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{f.title}</div>
+            <div style={{ color: "rgba(200,230,200,0.7)", fontSize: 12, lineHeight: 1.7, marginBottom: 4 }}>{f.body}</div>
+            <div style={{ color: "rgba(138,255,138,0.4)", fontSize: 11 }}>{f.scholar}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TimelineTab() {
+  return (
+    <div style={{ padding: 16, direction: "rtl" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 48, marginBottom: 8 }}>📅</div>
+        <div style={{ color: "#ffd700", fontSize: 20, fontWeight: 700 }}>مسيرة الحزب</div>
+      </div>
+      {TIMELINE.map((t, i) => (
+        <div key={i} style={{ display: "flex", gap: 12, marginBottom: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 40 }}>
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: t.gold ? "#ffd700" : "rgba(77,255,77,0.4)", boxShadow: t.gold ? "0 0 10px rgba(255,215,0,0.5)" : "none" }} />
+            {i < TIMELINE.length - 1 && <div style={{ width: 2, flex: 1, background: "rgba(42,122,42,0.3)" }} />}
+          </div>
+          <div style={{ flex: 1, paddingBottom: 16 }}>
+            <div style={{ color: t.gold ? "#ffd700" : "#8aff8a", fontSize: 14, fontWeight: 700 }}>{t.year}</div>
+            <div style={{ color: "rgba(200,230,200,0.7)", fontSize: 12, lineHeight: 1.6 }}>{t.event}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ChatTab({ user }) {
+  const [msgs, setMsgs] = useState(loadMsgs(user.name));
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const listRef = useRef();
+
+  useEffect(() => { saveMsgs(user.name, msgs); }, [msgs]);
+  useEffect(() => { if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight; }, [msgs]);
+
+  async function send() {
+    const text = input.trim();
+    if (!text || loading) return;
+    const userMsg = { role: "user", text, time: new Date().toLocaleTimeString("ar-IQ") };
+    setMsgs(m => [...m, userMsg]);
+    setInput("");
+    setLoading(true);
+    try {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + (localStorage.getItem("wati_or_key") || "") },
+        body: JSON.stringify({ model: "google/gemini-2.0-flash-001", messages: [{ role: "system", content: SYSTEM_PROMPT }, ...msgs.slice(-10).map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text })), { role: "user", content: text }] }),
+      });
+      const data = await res.json();
+      const reply = data.choices?.[0]?.message?.content || "عذراً، لم أتمكن من الرد.";
+      setMsgs(m => [...m, { role: "bot", text: reply, time: new Date().toLocaleTimeString("ar-IQ") }]);
+    } catch {
+      setMsgs(m => [...m, { role: "bot", text: "خطأ في الاتصال. حاول مرة أخرى.", time: new Date().toLocaleTimeString("ar-IQ") }]);
+    }
+    setLoading(false);
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 140px)", direction: "rtl" }}>
+      <div ref={listRef} style={{ flex: 1, overflowY: "auto", padding: 16 }}>
+        {msgs.length === 0 && <div style={{ textAlign: "center", color: "rgba(138,255,138,0.3)", fontSize: 13, marginTop: 40 }}>ابدأ محادثة مع المساعد الرسمي</div>}
+        {msgs.map((m, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: m.role === "user" ? "flex-start" : "flex-end", marginBottom: 10 }}>
+            <div style={{ maxWidth: "80%", background: m.role === "user" ? "rgba(77,255,77,0.1)" : "rgba(255,215,0,0.08)", border: `1px solid ${m.role === "user" ? "rgba(77,255,77,0.3)" : "rgba(255,215,0,0.2)"}`, borderRadius: 12, padding: "10px 14px" }}>
+              <div style={{ color: m.role === "user" ? "#8aff8a" : "#ffd700", fontSize: 13, lineHeight: 1.7 }}>{m.text}</div>
+              <div style={{ color: "rgba(138,255,138,0.3)", fontSize: 10, marginTop: 4 }}>{m.time}</div>
+            </div>
+          </div>
+        ))}
+        {loading && <div style={{ textAlign: "center", color: "rgba(255,215,0,0.5)", fontSize: 13 }}>جاري الرد...</div>}
+      </div>
+      <div style={{ padding: "8px 16px 16px", display: "flex", gap: 8 }}>
+        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="اكتب سؤالك..." dir="rtl" disabled={loading}
+          style={{ flex: 1, padding: "10px 14px", background: "rgba(10,20,10,0.8)", border: "1px solid rgba(42,122,42,0.4)", borderRadius: 10, color: "#b8ffb8", fontSize: 14, outline: "none", fontFamily: "inherit" }} />
+        <button onClick={send} disabled={loading || !input.trim()} style={{ padding: "10px 18px", background: "linear-gradient(135deg,#1a7a1a,#2aaa2a)", border: "1px solid rgba(77,255,77,0.4)", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>إرسال</button>
+      </div>
+    </div>
+  );
+}
+
+function PrinciplesTab() {
+  return (
+    <div style={{ padding: 16, direction: "rtl" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 48, marginBottom: 8 }}>⚖️</div>
+        <div style={{ color: "#ffd700", fontSize: 20, fontWeight: 700 }}>مبادئ الحزب</div>
+      </div>
+      {PRINCIPLES.map((p, i) => (
+        <div key={i} style={{ background: "rgba(6,13,6,0.9)", border: "1px solid rgba(42,122,42,0.4)", borderRadius: 12, padding: 14, marginBottom: 10, display: "flex", alignItems: "flex-start", gap: 12 }}>
+          <span style={{ fontSize: 24 }}>{p.icon}</span>
+          <div>
+            <div style={{ color: "#ffd700", fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{p.title}</div>
+            <div style={{ color: "rgba(200,230,200,0.7)", fontSize: 12, lineHeight: 1.7 }}>{p.desc}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MapTab() {
+  return (
+    <div style={{ padding: 16, direction: "rtl" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 48, marginBottom: 8 }}>🌍</div>
+        <div style={{ color: "#ffd700", fontSize: 20, fontWeight: 700 }}>الانتشار العالمي</div>
+      </div>
+      <div style={{ position: "relative", width: "100%", aspectRatio: "2/1", background: "rgba(6,13,6,0.9)", border: "1px solid rgba(42,122,42,0.4)", borderRadius: 12, overflow: "hidden", marginBottom: 14 }}>
+        {WORLD_PRESENCE.map((p, i) => (
+          <div key={i} style={{ position: "absolute", left: p.x + "%", top: p.y + "%", width: 10, height: 10, borderRadius: "50%", background: p.color, boxShadow: `0 0 10px ${p.color}88`, transform: "translate(-50%,-50%)", animation: "pulse 2s ease infinite" }} title={p.country} />
+        ))}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+        {WORLD_PRESENCE.map((p, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 8px" }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: p.color }} />
+            <span style={{ color: "rgba(200,230,200,0.6)", fontSize: 11 }}>{p.country}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MAIN APP
+// ============================================================
+const TABS = [
+  { key: "home", label: "الرئيسة", icon: "🏠" },
+  { key: "leader", label: "القائد", icon: "👑" },
+  { key: "alliance", label: "التحالفات", icon: "🤝" },
+  { key: "military", label: "الكتائب", icon: "⚔️" },
+  { key: "religion", label: "الدين", icon: "🕌" },
+  { key: "timeline", label: "المسيرة", icon: "📅" },
+  { key: "principles", label: "المبادئ", icon: "⚖️" },
+  { key: "map", label: "الخريطة", icon: "🌍" },
+  { key: "chat", label: "المساعد", icon: "💬" },
+];
+
+function App() {
+  const [screen, setScreen] = useState("loading");
+  const [user, setUser] = useState(null);
+  const [tab, setTab] = useState("home");
+
+  if (screen === "loading") return <><Particles /><LoadingScreen onDone={() => setScreen("welcome")} /></>;
+  if (screen === "welcome") return <><Particles /><WelcomePage onNext={() => setScreen("login")} /></>;
+  if (screen === "login") return <><Particles /><LoginPage onLogin={u => { setUser(u); setScreen("dashboard"); }} /></>;
+
+  return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#040a04,#080f08,#04080e)", color: "#b8ffb8", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <Particles />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <header style={{ position: "sticky", top: 0, zIndex: 10, background: "rgba(4,10,4,0.95)", borderBottom: "1px solid rgba(42,122,42,0.3)", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", backdropFilter: "blur(10px)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 24 }}>🦅</span>
+            <span style={{ color: "#ffd700", fontSize: 16, fontWeight: 700 }}>واتي</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ color: "rgba(138,255,138,0.5)", fontSize: 11 }}>{user?.name}</span>
+            <button onClick={() => { setUser(null); setScreen("login"); setTab("home"); }} style={{ background: "rgba(255,68,68,0.1)", border: "1px solid rgba(255,68,68,0.3)", borderRadius: 8, padding: "4px 10px", color: "#ff6666", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>خروج</button>
+          </div>
+        </header>
+        <main style={{ paddingBottom: 60 }}>
+          {tab === "home" && <HomeTab user={user} />}
+          {tab === "leader" && <LeaderTab />}
+          {tab === "alliance" && <AllianceTab />}
+          {tab === "military" && <MilitaryTab />}
+          {tab === "religion" && <ReligionTab />}
+          {tab === "timeline" && <TimelineTab />}
+          {tab === "principles" && <PrinciplesTab />}
+          {tab === "map" && <MapTab />}
+          {tab === "chat" && <ChatTab user={user} />}
+        </main>
+        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 10, background: "rgba(4,10,4,0.97)", borderTop: "1px solid rgba(42,122,42,0.3)", display: "flex", overflowX: "auto", backdropFilter: "blur(10px)" }}>
+          {TABS.map(t => <DashboardTab key={t.key} label={t.label} icon={t.icon} active={tab === t.key} onClick={() => setTab(t.key)} />)}
+        </nav>
+      </div>
+    </div>
+  );
+}
+
+export default App;
