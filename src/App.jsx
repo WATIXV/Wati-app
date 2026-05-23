@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // ============================================================
 // CONSTANTS
@@ -167,7 +167,7 @@ const ANNOUNCEMENTS = [
 function Particles() {
   const pts = useRef(Array.from({ length: 25 }, () => ({ w: Math.random() * 3 + 1, x: Math.random() * 100, y: Math.random() * 100, dur: Math.random() * 8 + 5, delay: Math.random() * 6, gold: Math.random() > 0.5 }))).current;
   return (
-    <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", zIndex: 0 }}>
       {pts.map((p, i) => <div key={i} style={{ position: "absolute", width: p.w, height: p.w, borderRadius: "50%", background: p.gold ? "rgba(255,215,0,0.15)" : "rgba(77,255,77,0.12)", left: p.x + "%", top: p.y + "%", animation: `floatP ${p.dur}s ease-in-out ${p.delay}s infinite alternate` }} />)}
     </div>
   );
@@ -178,10 +178,16 @@ function Particles() {
 // ============================================================
 function LoadingScreen({ onDone }) {
   const [step, setStep] = useState(0);
-  const steps = ["تحميل النظام...", "التحقق من الهوية...", "فتح المنصة الآمنة...", "مرحباً بك 🦅"];
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
+  const steps = ["تحميل النظام...", "التحقق من الهوية...", "فتح المنصة الآمنة...", "مرحباً بك"];
   useEffect(() => {
-    const t = setInterval(() => setStep(s => { if (s >= steps.length - 1) { clearInterval(t); setTimeout(onDone, 800); return s; } return s + 1; }), 700);
-    return () => clearInterval(t);
+    let timer;
+    const t = setInterval(() => setStep(s => {
+      if (s >= 3) { clearInterval(t); timer = setTimeout(() => onDoneRef.current(), 800); return s; }
+      return s + 1;
+    }), 700);
+    return () => { clearInterval(t); clearTimeout(timer); };
   }, []);
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(160deg,#040a04,#080f08,#04080e)" }}>
@@ -605,9 +611,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("home");
 
-  if (screen === "loading") return <><Particles /><LoadingScreen onDone={() => setScreen("welcome")} /></>;
-  if (screen === "welcome") return <><Particles /><WelcomePage onNext={() => setScreen("login")} /></>;
-  if (screen === "login") return <><Particles /><LoginPage onLogin={u => { setUser(u); setScreen("dashboard"); }} /></>;
+  if (screen === "loading") return <React.Fragment><Particles /><LoadingScreen onDone={() => setScreen("welcome")} /></React.Fragment>;
+  if (screen === "welcome") return <React.Fragment><Particles /><WelcomePage onNext={() => setScreen("login")} /></React.Fragment>;
+  if (screen === "login") return <React.Fragment><Particles /><LoginPage onLogin={u => { setUser(u); setScreen("dashboard"); }} /></React.Fragment>;
 
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#040a04,#080f08,#04080e)", color: "#b8ffb8", fontFamily: "system-ui, -apple-system, sans-serif" }}>
